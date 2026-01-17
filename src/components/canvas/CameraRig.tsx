@@ -2,6 +2,7 @@
 
 import { useFrame, useThree } from '@react-three/fiber';
 import { useScroll } from '@react-three/drei';
+import { useRef } from 'react';
 
 import * as THREE from 'three';
 
@@ -18,12 +19,15 @@ export const CameraRig = ({
     planetSpacing,
     isRtl = false,
     targetPlanetIndex = null,
-    isZoomed = false
-}: CameraRigProps) => {
+    isZoomed = false,
+    viewMode = 'LINE_UP'
+}: CameraRigProps & { viewMode?: 'ORRERY' | 'LINE_UP' }) => {
     const scroll = useScroll();
     const { camera } = useThree();
 
     useFrame((state, delta) => {
+        if (viewMode === 'ORRERY') return;
+
         const direction = isRtl ? -1 : 1;
         const totalDistance = (planetCount - 1) * planetSpacing;
 

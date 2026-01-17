@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import clsx from 'clsx';
+import { useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { ScrollControls } from '@react-three/drei';
+import { ScrollControls, OrbitControls } from '@react-three/drei';
 import { Planet } from '../types/planet';
 import { useAnalytics } from '../hooks/useAnalytics';
 import { useTranslations, useLocale } from 'next-intl';
@@ -14,13 +15,17 @@ import RocketLab from './RocketLab';
 import { Scene } from './Scene';
 import { Planet3D } from './canvas/Planet3D';
 import { CameraRig } from './canvas/CameraRig';
+import { SpaceDust } from './canvas/SpaceDust';
 import planetsData from '../content/planets.json';
 
 // Cast JSON to typed array
 const planets = planetsData as Planet[];
 
-// Gap between planets in 3D space
-const PLANET_SPACING = 30;
+// Gap between planets in Linear Mode (Reduced from 30)
+const PLANET_SPACING = 15;
+
+// Orrery Mode Radius Multiplier
+const ORRERY_RADIUS_SCALE = 10;
 
 function PlanetSystem({
     planets,
@@ -28,34 +33,55 @@ function PlanetSystem({
     isRtl,
     selectedPlanetId,
     isOrbitMode,
-    onPoiClick
+    onPoiClick,
+    viewMode
 }: {
     planets: Planet[],
     onPlanetClick: (p: Planet) => void,
     isRtl: boolean,
     selectedPlanetId?: string,
     isOrbitMode?: boolean,
-    onPoiClick?: (poi: NonNullable<Planet['pointsOfInterest']>[0]) => void
+    onPoiClick?: (poi: NonNullable<Planet['pointsOfInterest']>[0]) => void,
+    viewMode: 'ORRERY' | 'LINE_UP'
 }) {
     // Determine direction multiplier: 1 for LTR (Move Right), -1 for RTL (Move Left)
     const direction = isRtl ? -1 : 1;
 
     return (
         <group>
-            {planets.map((planet, index) => (
-                <group
-                    key={planet.id}
-                    position={[index * PLANET_SPACING * direction, 0, 0]}
-                >
-                    <Planet3D
-                        planet={planet}
-                        onClick={onPlanetClick}
-                        isSelected={planet.id === selectedPlanetId}
-                        isInOrbitMode={isOrbitMode && planet.id === selectedPlanetId}
-                        onPoiClick={onPoiClick}
-                    />
-                </group>
-            ))}
+            {planets.map((planet, index) => {
+                let position: [number, number, number] = [0, 0, 0];
+
+                if (viewMode === 'ORRERY') {
+                    // Circular Layout (Simple concentric circles for now)
+                    // Angle offset to spiral them out
+                    const angle = index * (Math.PI / 4); // 45 degrees offset per planet
+                    const radius = (index + 2) * ORRERY_RADIUS_SCALE / 2; // +2 to push out from Sun
+                    position = [
+                        Math.sin(angle) * radius,
+                        0,
+                        Math.cos(angle) * radius
+                    ];
+                } else {
+                    // Linear Layout
+                    position = [index * PLANET_SPACING * direction, 0, 0];
+                }
+
+                return (
+                    <group
+                        key={planet.id}
+                        position={position}
+                    >
+                        <Planet3D
+                            planet={planet}
+                            onClick={onPlanetClick}
+                            isSelected={planet.id === selectedPlanetId}
+                            isInOrbitMode={isOrbitMode && planet.id === selectedPlanetId}
+                            onPoiClick={onPoiClick}
+                        />
+                    </group>
+                );
+            })}
         </group>
     );
 }
@@ -68,6 +94,9 @@ export default function SolarSystem() {
 
     const [selectedPlanet, setSelectedPlanet] = useState<Planet | null>(null);
     const [isOrbitMode, setIsOrbitMode] = useState(false);
+    // New View Mode State
+    const [viewMode, setViewMode] = useState<'ORRERY' | 'LINE_UP'>('LINE_UP');
+
     const [selectedPoi, setSelectedPoi] = useState<NonNullable<Planet['pointsOfInterest']>[0] | null>(null);
 
     const [isLockedOverlayOpen, setIsLockedOverlayOpen] = useState(false);
@@ -110,6 +139,12 @@ export default function SolarSystem() {
         setSelectedPoi(null);
     };
 
+    const toggleViewMode = () => {
+        const newMode = viewMode === 'LINE_UP' ? 'ORRERY' : 'LINE_UP';
+        setViewMode(newMode);
+        track('view_mode_changed', { mode: newMode });
+    };
+
     const selectedPlanetIndex = selectedPlanet
         ? planets.findIndex(p => p.id === selectedPlanet.id)
         : null;
@@ -126,9 +161,14 @@ export default function SolarSystem() {
             {/* 2D UI Overlay Layer (Absolute) */}
             <div className="absolute top-4 inset-inline-start-4 z-50 flex gap-4">
                 {!isOrbitMode && (
-                    <Button onClick={() => setShowRocketLab(true)} className="bg-purple-600 border-purple-800">
-                        🚀 Build Ship
-                    </Button>
+                    <>
+                        <Button onClick={() => setShowRocketLab(true)} className="bg-purple-600 border-purple-800">
+                            🚀 Build Ship
+                        </Button>
+                        <Button onClick={toggleViewMode} className="bg-teal-600 border-teal-800">
+                            {viewMode === 'LINE_UP' ? '🔄 Orrery View' : '📏 Line-Up View'}
+                        </Button>
+                    </>
                 )}
 
                 {isOrbitMode && (
@@ -142,29 +182,56 @@ export default function SolarSystem() {
             <div className="absolute inset-0 z-10">
                 <Canvas camera={{ position: [0, 0, 20], fov: 45 }}>
                     <Scene>
-                        <ScrollControls
-                            pages={planets.length}
-                            horizontal
-                            damping={0.4}
-                            distance={1}
-                            enabled={true} // Keep enabled to preserve scroll state
-                        >
-                            <CameraRig
-                                planetCount={planets.length}
-                                planetSpacing={PLANET_SPACING}
-                                isRtl={isRtl}
-                                targetPlanetIndex={selectedPlanetIndex}
-                                isZoomed={isOrbitMode}
-                            />
-                            <PlanetSystem
-                                planets={planets}
-                                onPlanetClick={handlePlanetClick}
-                                isRtl={isRtl}
-                                selectedPlanetId={selectedPlanet?.id}
-                                isOrbitMode={isOrbitMode}
-                                onPoiClick={handlePoiClick}
-                            />
-                        </ScrollControls>
+                        <SpaceDust count={300} radius={60} />
+
+                        {/* We conditionally render controls to prevent conflicts */}
+                        {viewMode === 'LINE_UP' || isOrbitMode ? (
+                            <ScrollControls
+                                pages={planets.length}
+                                horizontal
+                                damping={0.4}
+                                distance={1}
+                                enabled={viewMode === 'LINE_UP' && !isOrbitMode}
+                            >
+                                <CameraRig
+                                    planetCount={planets.length}
+                                    planetSpacing={PLANET_SPACING}
+                                    isRtl={isRtl}
+                                    targetPlanetIndex={selectedPlanetIndex}
+                                    isZoomed={isOrbitMode}
+                                    viewMode={viewMode}
+                                />
+                                <PlanetSystem
+                                    planets={planets}
+                                    onPlanetClick={handlePlanetClick}
+                                    isRtl={isRtl}
+                                    selectedPlanetId={selectedPlanet?.id}
+                                    isOrbitMode={isOrbitMode}
+                                    onPoiClick={handlePoiClick}
+                                    viewMode={viewMode}
+                                />
+                            </ScrollControls>
+                        ) : (
+                            /* Orrery Mode Controls */
+                            <>
+                                <OrbitControls
+                                    enablePan={false}
+                                    enableZoom={true}
+                                    minDistance={10}
+                                    maxDistance={80}
+                                    maxPolarAngle={Math.PI / 2} // Restrict to top hemisphere
+                                />
+                                <PlanetSystem
+                                    planets={planets}
+                                    onPlanetClick={handlePlanetClick}
+                                    isRtl={isRtl}
+                                    selectedPlanetId={selectedPlanet?.id}
+                                    isOrbitMode={isOrbitMode}
+                                    onPoiClick={handlePoiClick}
+                                    viewMode={viewMode}
+                                />
+                            </>
+                        )}
                     </Scene>
                 </Canvas>
             </div>
