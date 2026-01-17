@@ -1,0 +1,112 @@
+[
+    {
+        "id": "sun",
+        "icon": "☀️",
+        "color": "bg-orange-500",
+        "translationKey": "sun",
+        "facts": [
+            "content.sun.fact1",
+            "content.sun.fact2"
+        ],
+        "isLocked": false
+    },
+    {
+        "id": "earth",
+        "icon": "🌍",
+        "color": "bg-blue-500",
+        "translationKey": "earth",
+        "facts": [
+            "content.earth.fact1",
+            "content.earth.fact2"
+        ],
+        "isLocked": false,
+        "pointsOfInterest": [
+            {
+                "id": "everest",
+                "label": "🏔️ Mt. Everest",
+                "position": [
+                    0.5,
+                    0.5,
+                    0.8
+                ],
+                "fact": "The highest mountain!"
+            },
+            {
+                "id": "ocean",
+                "label": "🐋 Deep Ocean",
+                "position": [
+                    -0.5,
+                    -0.2,
+                    0.8
+                ],
+                "fact": "Whales live here!"
+            }
+        ]
+    },
+    {
+        "id": "moon",
+        "icon": "🌕",
+        "color": "bg-slate-300",
+        "translationKey": "moon",
+        "facts": [
+            "content.moon.fact1",
+            "content.moon.fact2"
+        ],
+        "isLocked": false
+    },
+    {
+        "id": "mars",
+        "icon": "🔴",
+        "color": "bg-red-500",
+        "translationKey": "mars",
+        "facts": [
+            "content.mars.fact1",
+            "content.mars.fact2"
+        ],
+        "isLocked": false,
+        "pointsOfInterest": [
+            {
+                "id": "olympus",
+                "label": "🌋 Olympus Mons",
+                "position": [
+                    0.2,
+                    0.5,
+                    0.9
+                ],
+                "fact": "The biggest volcano in space!"
+            },
+            {
+                "id": "rover",
+                "label": "🤖 Curiosity Rover",
+                "position": [
+                    -0.3,
+                    -0.1,
+                    0.9
+                ],
+                "fact": "Beep boop! I explore rocks."
+            }
+        ]
+    },
+    {
+        "id": "jupiter",
+        "icon": "🪐",
+        "color": "bg-yellow-600",
+        "translationKey": "jupiter",
+        "facts": [
+            "content.jupiter.fact1",
+            "content.jupiter.fact2"
+        ],
+        "isLocked": true
+    },
+    {
+        "id": "saturn",
+        "icon": "🪐",
+        "color": "bg-yellow-300",
+        "translationKey": "saturn",
+        "facts": [
+            "content.saturn.fact1",
+            "content.saturn.fact2"
+        ],
+        "isLocked": true
+    }
+]

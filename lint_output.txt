@@ -1,0 +1,102 @@
+
+> temp_app@0.1.0 lint
+> eslint
+
+
+/Users/admin/Projects/Space-Kids/src/app/[locale]/layout.tsx
+  17:45  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/admin/Projects/Space-Kids/src/components/ParentalGate.tsx
+  40:13  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/admin/Projects/Space-Kids/src/components/ParentalGate.tsx:40:13
+  38 |             timerRef.current = interval;
+  39 |         } else {
+> 40 |             setProgress(0);
+     |             ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  41 |             if (timerRef.current) clearInterval(timerRef.current);
+  42 |         }
+  43 |  react-hooks/set-state-in-effect
+
+/Users/admin/Projects/Space-Kids/src/components/RocketLab.tsx
+   9:11  warning  't' is assigned a value but never used         @typescript-eslint/no-unused-vars
+  11:19  warning  'setWings' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/admin/Projects/Space-Kids/src/components/SolarSystem.tsx
+  3:8   warning  'clsx' is defined but never used    @typescript-eslint/no-unused-vars
+  4:10  warning  'useRef' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/admin/Projects/Space-Kids/src/components/canvas/CameraRig.tsx
+  25:11  warning  'targetPos' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+  51:9   error    Error: This value cannot be modified
+
+Modifying a value returned from a hook is not allowed. Consider moving the modification into the hook where the value is constructed.
+
+/Users/admin/Projects/Space-Kids/src/components/canvas/CameraRig.tsx:51:9
+  49 |         // If coming back from zoom, this lerp handles the transition smoothly 
+  50 |         // because targetX creates a large delta which lerp closes over time.
+> 51 |         camera.position.x = THREE.MathUtils.lerp(camera.position.x, targetX, delta * 4);
+     |         ^^^^^^^^^^^^^^^ `camera` cannot be modified
+  52 |         camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, delta * 3);
+  53 |     });
+  54 |  react-hooks/immutability
+
+/Users/admin/Projects/Space-Kids/src/components/canvas/Planet3D.tsx
+   3:18  warning  'useMemo' is defined but never used         @typescript-eslint/no-unused-vars
+   6:28  warning  'RepeatWrapping' is defined but never used  @typescript-eslint/no-unused-vars
+   6:44  warning  'Texture' is defined but never used         @typescript-eslint/no-unused-vars
+  36:43  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  36:51  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  62:35  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  76:30  warning  'e' is defined but never used               @typescript-eslint/no-unused-vars
+  76:33  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+  83:35  error    Unexpected any. Specify a different type    @typescript-eslint/no-explicit-any
+
+/Users/admin/Projects/Space-Kids/src/components/canvas/PlanetScanner.tsx
+  3:10  warning  'Html' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/admin/Projects/Space-Kids/src/components/canvas/SunVisuals.tsx
+  139:19  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  140:25  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  141:23  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  142:25  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  143:26  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  144:25  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  145:24  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  150:34  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  151:33  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  158:9   error  Error: This value cannot be modified
+
+Modifying a value returned from a hook is not allowed. Consider moving the modification into the hook where the value is constructed.
+
+/Users/admin/Projects/Space-Kids/src/components/canvas/SunVisuals.tsx:158:9
+  156 |     // Configure texture wrapping for seamless sphere
+  157 |     useMemo(() => {
+> 158 |         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+      |         ^^^^^^^ value cannot be modified
+  159 |     }, [texture]);
+  160 |
+  161 |     useFrame((state, delta) => {                   react-hooks/immutability
+  158:25  error  Error: This value cannot be modified
+
+Modifying a value returned from a hook is not allowed. Consider moving the modification into the hook where the value is constructed.
+
+/Users/admin/Projects/Space-Kids/src/components/canvas/SunVisuals.tsx:158:25
+  156 |     // Configure texture wrapping for seamless sphere
+  157 |     useMemo(() => {
+> 158 |         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+      |                         ^^^^^^^ value cannot be modified
+  159 |     }, [texture]);
+  160 |
+  161 |     useFrame((state, delta) => {  react-hooks/immutability
+  171:18  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/ban-ts-comment
+  183:18  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/ban-ts-comment
+
+✖ 31 problems (21 errors, 10 warnings)
+

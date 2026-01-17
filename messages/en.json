@@ -1,0 +1,46 @@
+{
+    "HomePage": {
+        "title": "Little Astronaut's Odyssey",
+        "startJourney": "Start Journey"
+    },
+    "Planets": {
+        "earth": "Earth",
+        "mars": "Mars",
+        "moon": "Moon",
+        "sun": "Sun",
+        "jupiter": "Jupiter",
+        "saturn": "Saturn"
+    },
+    "LockedContent": {
+        "title": "Sleepy Planet",
+        "description": "This planet is sleeping. Ask your parents to wake it up!",
+        "unlock": "Wake Up",
+        "keepPlaying": "Keep Exploring"
+    },
+    "content": {
+        "earth": {
+            "fact1": "Earth is the only planet with life!",
+            "fact2": "70% of Earth is water."
+        },
+        "mars": {
+            "fact1": "Mars is known as the Red Planet.",
+            "fact2": "Mars has the highest mountain."
+        },
+        "moon": {
+            "fact1": "The Moon controls the tides.",
+            "fact2": "We have visited the Moon!"
+        },
+        "sun": {
+            "fact1": "The Sun is a giant star.",
+            "fact2": "It gives us light and heat."
+        },
+        "jupiter": {
+            "fact1": "Jupiter is the biggest planet!",
+            "fact2": "It has a Great Red Spot."
+        },
+        "saturn": {
+            "fact1": "Saturn has beautiful rings.",
+            "fact2": "It is made of gas."
+        }
+    }
+}
